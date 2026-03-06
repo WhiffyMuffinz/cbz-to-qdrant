@@ -41,6 +41,7 @@ share/python-wheels/
 # Data
 src/data/
 input-data
+data
 # Logs
 logs/
 *.log
