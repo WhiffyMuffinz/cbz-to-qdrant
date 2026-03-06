@@ -64,14 +64,8 @@ class EmbeddingBatchProcessor:
             return results
 
         image_data_list = [img[2] for img in all_images]
-        filenames = [img[3] for img in all_images]
 
-        batch_embeddings = []
-        for i, img_data in enumerate(image_data_list):
-            filename = filenames[i] if i < len(filenames) else ""
-            embedding = self.client.generate_embedding(img_data, filename)
-            if embedding is not None:
-                batch_embeddings.append(embedding)
+        batch_embeddings = self.client.generate_embeddings_batch(image_data_list)
 
         embedding_idx = 0
         for idx, result in enumerate(results):

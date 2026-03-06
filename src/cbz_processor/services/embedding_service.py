@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import io
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -113,7 +114,7 @@ class EmbeddingClient:
         self,
         image_data_list: list[bytes],
     ) -> list[list[float]]:
-        """Generate embeddings for batch of images.
+        """Generate embeddings for batch of images asynchronously.
 
         Args:
             image_data_list: List of image data
@@ -123,11 +124,26 @@ class EmbeddingClient:
         """
         embeddings: list[list[float]] = []
 
-        for image_bytes in image_data_list:
-            embedding = self.generate_embedding(image_bytes)
-            if embedding is not None:
-                embeddings.append(embedding)
+        if not image_data_list:
+            return embeddings
 
+        with ThreadPoolExecutor(max_workers=len(image_data_list)) as executor:
+            future_to_idx = {
+                executor.submit(self.generate_embedding, img): idx
+                for idx, img in enumerate(image_data_list)
+            }
+
+            results: list[list[float] | None] = [None] * len(image_data_list)
+            for future in as_completed(future_to_idx):
+                idx = future_to_idx[future]
+                try:
+                    embedding = future.result()
+                    if embedding is not None:
+                        results[idx] = embedding
+                except Exception:
+                    results[idx] = None
+
+        embeddings = [e for e in results if e is not None]
         return embeddings
 
     def is_available(self) -> bool:

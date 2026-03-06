@@ -74,12 +74,6 @@ class Pipeline:
                     self._process_current_batch()
                     batch_count += 1
 
-                    log_info(
-                        self.logger,
-                        f"Completed batch {batch_count}",
-                        checkpoint=self.checkpoint.get_summary(),
-                    )
-
                 pbar.update(1)
                 pbar.set_postfix(
                     images=self.checkpoint.state["images_extracted"],
