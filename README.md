@@ -1,6 +1,6 @@
 # CBZ Processor
 
-Production-ready CBZ file processor with Qdrant vector storage.
+CBZ file processor with Qdrant vector storage.
 
 ## Installation
 
