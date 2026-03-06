@@ -11,12 +11,15 @@ cp .env.example .env
 
 ## Usage
 
-Make sure that vllm and qdrant are both up: 
+Make sure that vllm and qdrant are both up:
 e.g.
 ```bash
 vllm serve Qwen/Qwen3-VL-Embedding-2B --runner pooling --max-model-len 32768 --gpu-memory-utilization 0.7 --port 7997
 ```
-
+and
+```bash
+podman run --port 6333:6333 --name qdrant -v ./qdrant:/qdrant/storage -e QDRANT__TELEMETRY_DISABLED=true qdrant/qdrant:latest
+```
 
 ```bash
 # Process CBZ files from directory
@@ -51,12 +54,9 @@ MAX_RETRIES=3
 
 ## Features
 
-- **Processing**: Recursive CBZ discovery, ZIP extraction, metadata parsing
-- **Embeddings**: vLLM with Qwen3-VL-Embedding-2B, 2048-dim vectors
-- **Storage**: Qdrant with cosine similarity and int8 quantization
 - **Resume**: Checkpoint-based recovery from interruptions
 - **Parallel**: Multi-worker processing for CBZ files
-- **Logging**: Structured JSON logs with rich console output
+- **Logging**: Structured JSON logs
 
 
 ## Monitoring
